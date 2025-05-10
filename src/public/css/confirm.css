@@ -1,0 +1,75 @@
+/* フォントと全体レイアウト */
+
+.contact-form__heading {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.confirm-table {
+    font-size: 32px;
+    color: #5e4e44;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin: 0;
+}
+
+/* テーブルレイアウト */
+.confirm-table__inner {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-bottom: 30px;
+}
+
+.confirm-table__row {
+    border-bottom: 1px solid #ddd;
+}
+
+.confirm-table__header {
+    width: 30%;
+    background-color: #cbb7a7;
+    padding: 12px;
+    text-align: left;
+    vertical-align: top;
+    font-weight: bold;
+    color: white;
+}
+
+.confirm-table__text {
+    padding: 12px;
+    background-color: #fff;
+    vertical-align: top;
+    word-break: break-word;
+}
+
+/* 入力項目をただ表示として見せる */
+.confirm-table__text input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    color: #5e4e44;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+/* ボタンデザイン */
+.form__buttons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.form__buttons button {
+    background-color: #cbb7a7;
+    color: white;
+    padding: 10px 40px;
+    border: none;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.form__buttons button:hover {
+    opacity: 0.8;
+}

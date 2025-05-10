@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+.container {
+    text-align: center;
+}
+
+.message {
+    font-size: 20px;
+    color: #7a6e65;
+}
+
+.home-button {
+    margin-top: 15px;
+    padding: 12px 24px;
+    background-color: #7a6e65;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}

@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.site-header {
+    border-bottom: 1px solid #e5e5e5;
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+.site-title {
+    font-size: 2rem;
+    color: #5b4b42;
+    margin: 0;
+}
+
+.site-main {
+    padding: 2rem 1rem;
+}
+
+.site-footer {
+    border-top: 1px solid #e5e5e5;
+    padding: 1rem 0;
+    text-align: center;
+    font-size: 40px;
+    color: #888;
+}

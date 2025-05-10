@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+// お問い合わせフォーム
+Route::get('/', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/confirm', [ContactController::class, 'confirm'])->name('contact.confirm');
+Route::post('/store', [ContactController::class, 'store'])->name('contact.store');
+Route::get('/thanks', [ContactController::class, 'thanks'])->name('contact.thanks');
+// 管理画面（認証後アクセス可）
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/admin/{id}', [AdminController::class, 'detail'])->name('admin.detail');
 });
