@@ -24,7 +24,7 @@ class Contact extends Model
     //フルネームのアクセサ
     public function getFullNameAttribute()
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->last_name . ' ' . $this->first_name;
     }
 
     //　性別のアクセサ
@@ -32,7 +32,7 @@ class Contact extends Model
 
     public function getGenderTextAttribute()
     {
-        switch ($this->attributes['gender']) {
+        switch ($this->gender) {
             case 1:
                 return '男性';
             case 2:

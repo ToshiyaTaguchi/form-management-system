@@ -10,29 +10,35 @@ class AdminController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Contact::query()->with('category');
+        $query = Contact::query();
 
-        // フィルター処理
+        // 名前またはメールアドレス(部分一致)でフィルタリング
         if ($request->filled('keyword')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->keyword . '%')
-                    ->orWhere('email', 'like', '%' . $request->keyword . '%');
+            $keyword = $request->input('keyword');
+            $query->where(function ($q) use ($keyword) {
+                $q->where('first_name', 'like', "%{$keyword}%")
+                    ->orWhere('last_name', 'like', "%{$keyword}%")
+                    ->orWhere('email', 'like', "%{$keyword}%");
             });
         }
 
+        // 性別(完全一致)
         if ($request->filled('gender')) {
-            $query->where('gender', $request->gender);
+            $query->where('gender', $request->input('gender'));
         }
-
+        
+        // カテゴリ(完全一致)
         if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+            $query->where('category_id', $request->input('category'));
         }
 
         if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
+            $query->whereDate('created_at', $request->input('date'));
         }
 
-        $contacts = $query->orderBy('created_at', 'desc')->paginate(7);
+        $contacts = $query->with('category')->orderBy('created_at', 'desc')->paginate(7);
+        $contacts->appends($request->all());
+
         $categories = Category::all();
 
         return view('admin.index', compact('contacts', 'categories'));
@@ -47,57 +53,66 @@ class AdminController extends Controller
         return view('admin.partials.detail', compact('contact'));
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        // - Contact モデルを使って全レコードを取得 (get())
-        // - with('category') を指定して、関連する category データも一緒に取得
-        $contacts = Contact::with('category')->get();
-        // CSVヘッダー
-        $csvHeader = [
-        'お名前', '性別', 'メールアドレス', 'お問い合わせの種類', '登録日時'
-        ];
+        $query = Contact::query();
 
-    //- $contacts の各レコードをマップ処理して、CSVフォーマットの配列を作成
-        $csvData = $contacts->map(function ($contact) {
-            return [
-                $contact->name,
-                $contact->gender,
-                $contact->email,
-                //　↓カテゴリが存在しない場合でもエラーを出さないように
-                optional($contact->category)->name,
-                // 日付フォーマットの調整
-                $contact->created_at->format('Y-m-d H:i:s'),
-            ];
-        });
-    
-        // CSVデータ作成
-        $callback = function () use ($csvHeader, $csvData) {
-            // ダウンロード用のストリームを開く
-            $file = fopen('php://output', 'w');
-            // 文字化け対策(Windows環境)
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
-            // 最初の行にヘッダーを書き込む
-            fputcsv($file, $csvHeader);
+        // 名前またはメールのキーワード検索（部分一致）
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('first_name', 'like', "%{$keyword}%")
+                    ->orWhere('last_name', 'like', "%{$keyword}%")
+                    ->orWhere('email', 'like', "%{$keyword}%");
+            });
+        }
+
+        // 性別（1:男性, 2:女性, 3:その他）
+        if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
+        }
+
+        // カテゴリIDでフィルタ
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        // 日付でフィルタ（created_atのDATE部分のみで比較）
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        $contacts = $query->with('category')->get();
+
+        // CSVファイル名
+        // 現在の日付と時刻を取得
+        // 例: content_20231001_123456.csv
+        $filename = 'content_' . now()->format('Ymd_His') . '.csv';
+        $encodedFilename = rawurlencode($filename);
         
-            // 各レコードをCSV形式で書き込む
-            // $csvData は配列のコレクションなので、foreach でループ処理
-            // 1行ずつ CSV に書き込む
-            foreach ($csvData as $row) {
-                fputcsv($file, $row);
-            }
-            // ファイルを閉じる
-            fclose($file);
-        };
+        // ストリーミングレスポンスでCSV出力
+        return response()->stream(function () use ($contacts) {
+            $stream = fopen('php://output', 'w');
 
-        // ファイル名を生成　現在時刻を組み込んだファイル名を生成
-        $filename = 'contacts_' . now()->format('Ymd_His') . '.csv';
+            // BOMを追加してExcelでの文字化けを防ぐ
+            fwrite($stream, "\xEF\xBB\xBF");
 
-        // ダウンロード用のレスポンスを生成
-        return response()->streamDownload($callback, $filename, [
-            // CSVファイルとして認識
-            'Content-Type' => 'text/csv',
-            // 指定した名前でダウンロードできるよう設定
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ]);
-    }
+            // ヘッダー行を追加
+            fputcsv($stream, ['お名前', '性別', 'メールアドレス', 'お問い合わせの種類']);
+
+            foreach ($contacts as $contact) {
+                fputcsv($stream, [
+                    $contact->full_name,
+                    $contact->gender_text,
+                    $contact->email,
+                    $contact->category->name ?? '未設定',
+                ]);
+                }
+
+                fclose($stream);
+        }, 200, [
+                    'Content-Type' => 'text/csv; charset=UTF-8',
+                    'Content-Disposition' => "attachment; filename=\"{$filename}\"; filename*=UTF-8''{$encodedFilename}",
+                ]);
+        }
 }
