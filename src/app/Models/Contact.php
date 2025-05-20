@@ -20,4 +20,28 @@ class Contact extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    //フルネームのアクセサ
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    //　性別のアクセサ
+    // Bladdeでの表記　<td>{{ $contact->gender_text }}</td>
+
+    public function getGenderTextAttribute()
+    {
+        switch ($this->attributes['gender']) {
+            case 1:
+                return '男性';
+            case 2:
+                return '女性';
+            case 3:
+                return 'その他';
+            default:
+                return '未設定';
+        }
+    }
+
 }

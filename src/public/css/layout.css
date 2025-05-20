@@ -9,23 +9,31 @@ body {
 .container {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 40px;
 }
 
 .site-header {
     border-bottom: 1px solid #e5e5e5;
-    padding: 1.5rem 0;
+    padding: 60px 0;
     text-align: center;
 }
 
 .site-title {
-    font-size: 2rem;
+    font-size: 40px;
     color: #5b4b42;
     margin: 0;
 }
 
+.logout-button {
+    background: #F0F0F0;
+    border: 1px solid #D9C6B5;
+    color: #D9C6B5;
+    font-size: 20px;
+    cursor: pointer;
+}
+
 .site-main {
-    padding: 2rem 1rem;
+    padding: 80px 40px;
 }
 
 .site-footer {

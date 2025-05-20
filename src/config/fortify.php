@@ -74,7 +74,8 @@ return [
     |
     */
 
-    'home' => RouteServiceProvider::HOME,
+    // config/fortify.php
+    'home' => '/admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -145,11 +146,22 @@ return [
     */
 
     'features' => [
+        //ユーザーの新規登録を有効化(/registerルートが有効)
         Features::registration(),
+
+        //パスワードのリセットが有効化(/forgot-passwordルートが有効)
         Features::resetPasswords(),
+
+        //メールアドレスの認証が有効化(/email/verifyルートが有効)
         // Features::emailVerification(),
+
+        //プロフィールの更新(名前・メールアドレスなど)機能が有効化
         Features::updateProfileInformation(),
+
+        //パスワードの更新機能が有効化
         Features::updatePasswords(),
+
+        //2要素認証（ユーザーがログインする際に、2つの要素で本人確認を実施）
         Features::twoFactorAuthentication([
             'confirm' => true,
             'confirmPassword' => true,

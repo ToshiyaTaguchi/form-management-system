@@ -1,38 +1,39 @@
 @extends('layouts.app')
 
-@section('index')
+@section('content')
+    @livewire('contact-modal')
 <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
-<>
-    <header>
-        <h1>FashionablyLate</h1>
-        <form action="{{ route('logout') }}" method="POST" style="text-align:right;">
-            @csrf
-            <button type="submit" class="logout-button">logout</button>
-        </form>
-    </header>
 
-    <>
+    <div>
         <h2>Admin</h2>
 
         <form method="GET" action="{{ route('admin.index') }}" class="search-form">
-            <input type="text" name="keyword" placeholder="名前やメールアドレスを入力してください">
+            <input type="text" name="keyword" value="{{ request('keyword') }}" placeholder="名前やメールアドレスを入力してください">
             <select name="gender">
                 <option value="">性別</option>
-                <option value="男性">男性</option>
-                <option value="女性">女性</option>
+                <option value="男性" {{ request('gender') == '男性' ? 'selected' : '' }}>男性</option>
+                <option value="女性" {{ request('gender') == '女性' ? 'selected' : '' }}>女性</option>
             </select>
+
             <select name="category">
                 <option value="">お問い合わせの種類</option>
-                <!-- 動的に埋め込む場合は @foreach -->
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
             </select>
+
             <input type="date" name="date">
 
             <button type="submit" class="search-btn">検索</button>
             <a href="{{ route('admin.index') }}" class="reset-btn">リセット</a>
         </form>
 
-        <button class="export-btn">エクスポート</button>
+        <form method="GET" action="{{ route('admin.export') }}" >
+            <button type="submit" class="export-btn">エクスポート</button>
+        </form>
 
         <table>
             <thead>
@@ -47,11 +48,12 @@
             <tbody>
                 @foreach ($contacts as $contact)
                 <tr>
-                    <td>{{ $contact->name }}</td>
-                    <td>{{ $contact->gender }}</td>
+                    <td>{{ $contact->full_name }}</td>
+                    <td>{{ $contact->gender_text }}</td>
                     <td>{{ $contact->email }}</td>
                     <td>{{ $contact->category->name }}</td>
-                    <td><a href="{{ route('admin.detail', $contact->id) }}" class="detail-btn">詳細</a></td>
+                    <td><button wire:click="$emit('openModal', {{ $contact->id }})" class="btn btn-primary">詳細</button>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -60,4 +62,5 @@
         <div class="pagination">
             {{ $contacts->links() }}
         </div>
+    </div>
 @endsection

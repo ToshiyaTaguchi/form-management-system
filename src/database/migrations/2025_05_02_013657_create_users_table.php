@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
             $table->bigIncrements('id'); // 主キー
             $table->string('name', 255)->nullable(false);
             $table->string('email', 255)->unique()->nullable(false);
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 255)->nullable(false);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

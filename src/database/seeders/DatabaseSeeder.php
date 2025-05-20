@@ -3,21 +3,25 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Contact;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
         $this->call([
             CategoriesSeeder::class,
-            ContactsSeeder::class,
+        ]);
+
+        Contact::factory()->count(35)->create();
+
+                // 例：管理者ユーザーもここで作成したいなら追加
+        User::create([
+            'name' => 'admin',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
         ]);
     }
 }
