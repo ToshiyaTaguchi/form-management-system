@@ -6,6 +6,8 @@
     <title>FashionablyLate</title>
     <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}">
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inika&display=swap" rel="stylesheet">
+
     @livewireStyles {{-- Livewireのスタイル --}}
     @yield('styles') {{-- 必要があればページ個別スタイル --}}
     
@@ -30,6 +32,8 @@
     </main>
 
     @livewireScripts {{-- LivewireのJavaScript --}}
+    @stack('scripts')
+
 </body>
 </html>
 

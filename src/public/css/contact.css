@@ -47,10 +47,14 @@
 .tel-group,
 .radio-group {
     display: flex;
-    gap: 10px;
+    gap: 40px;
 }
 
-.name-fields input,
+.form__flex-item {
+    flex: 1;
+}
+
+.name-fields input
 .tel-group input {
     width: 100%;
     padding: 10px;
@@ -62,6 +66,7 @@ input[type="text"],
 input[type="email"],
 select,
 textarea {
+    display: block;
     width: 100%;
     padding: 10px;
     background: #f6f6f6;
@@ -75,10 +80,14 @@ textarea {
 }
 
 .radio-group {
-    gap: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .radio-group label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 60px;
     font-weight: normal;
 }
 
@@ -115,6 +124,7 @@ button {
 }
 
 .form__error {
+    display: block;
     height: 20px;
     color: #ff0000;
     text-align: left;
